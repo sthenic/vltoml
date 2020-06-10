@@ -18,6 +18,7 @@ This tool is free software released under the [MIT license](https://opensource.o
 ## Third-party dependencies
 
 * [Nim's standard library](https://github.com/nim-lang/Nim)
+* [parsetoml](https://github.com/NimParsers/parsetoml)
 
 ## Author
 vltoml is maintained by [Marcus Eriksson](mailto:marcus.jr.eriksson@gmail.com).
