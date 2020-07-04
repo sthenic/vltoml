@@ -28,4 +28,6 @@ jobs:
         nim-version: '1.2.0'
 
     - name: Test
-      run: nimble test -y
+      run: |
+        nimble install -d
+        nimble test -y
