@@ -29,5 +29,5 @@ jobs:
 
     - name: Test
       run: |
-        nimble install -d
+        nimble install -d -y
         nimble test -y
