@@ -172,6 +172,24 @@ max_nof_diagnostics = "foo"
 """, Configuration(), true)
 
 
+run_test("Duplicate include path", """
+[verilog]
+include_paths = [
+   "../tests",
+   "../tests",
+   "/path/to/dir/a",
+   "/path/to/dir/b"
+   "/path/to/dir/a"
+]
+""",
+   new_configuration(-1, @[
+      "../tests",
+      "/path/to/dir/a",
+      "/path/to/dir/b"
+   ], @[])
+)
+
+
 # Print summary
 styledWriteLine(stdout, styleBright, "\n----- SUMMARY -----")
 var test_str = "test"
