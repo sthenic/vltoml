@@ -44,11 +44,11 @@ proc init*(cfg: var Configuration) =
 proc find_configuration_file*(path: string): string =
    const FILENAMES = [".vl.toml", "vl.toml", ".vl/.vl.toml", ".vl/vl.toml",
                       "vl/.vl.toml", "vl/vl.toml"]
-   let expanded_path =
-      try:
-         expand_filename(path)
-      except OSError:
-         return ""
+   var expanded_path = ""
+   try:
+      expanded_path = expand_filename(path)
+   except OSError:
+      return ""
 
    # Walk from the provided path up to the root directory, searching for a
    # configuration file.
@@ -118,7 +118,7 @@ proc parse_string*(s: string): Configuration =
 
 
 proc parse_file*(filename: string): Configuration =
-   if not exists_file(filename):
+   if not file_exists(filename):
       raise new_configuration_parse_error("The file '$1' does not exist.", filename)
 
    let lfilename = expand_filename(filename)
