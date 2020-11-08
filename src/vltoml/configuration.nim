@@ -3,10 +3,16 @@ import strutils
 import os
 
 type
+   Diagnostics* = object
+      undeclared_identifiers*: bool
+      unconnected_ports*: bool
+      missing_ports*: bool
+
    Configuration* = object
       include_paths*: seq[string]
       defines*: seq[string]
       max_nof_diagnostics*: int
+      diagnostics*: Diagnostics
 
    ConfigurationParseError* = object of ValueError
 
@@ -39,6 +45,9 @@ proc init*(cfg: var Configuration) =
    set_len(cfg.include_paths, 0)
    set_len(cfg.defines, 0)
    cfg.max_nof_diagnostics = -1
+   cfg.diagnostics.undeclared_identifiers = true
+   cfg.diagnostics.unconnected_ports = true
+   cfg.diagnostics.missing_ports = true
 
 
 proc find_configuration_file*(path: string): string =
@@ -74,6 +83,11 @@ template ensure_int(t: TomlValueRef, scope: string) =
       raise new_configuration_parse_error("Expected an integer when parsing '$1'.", scope)
 
 
+template ensure_bool(t: TomlValueRef, scope: string) =
+   if t.kind != TomlValueKind.Bool:
+      raise new_configuration_parse_error("Expected a boolean value when parsing '$1'.", scope)
+
+
 proc parse_verilog_table(t: TomlValueRef, cfg: var Configuration) =
    if has_key(t, "include_paths"):
       let include_paths = t["include_paths"]
@@ -99,6 +113,23 @@ proc parse_vls_table(t: TomlValueRef, cfg: var Configuration) =
       cfg.max_nof_diagnostics = get_int(val)
 
 
+proc parse_diagnostics_table(t: TomlValueRef, cfg: var Configuration) =
+   if has_key(t, "undeclared_identifiers"):
+      let val = t["undeclared_identifiers"]
+      ensure_bool(val, "diagnostics.undeclared_identifiers")
+      cfg.diagnostics.undeclared_identifiers = get_bool(val)
+
+   if has_key(t, "unconnected_ports"):
+      let val = t["unconnected_ports"]
+      ensure_bool(val, "diagnostics.unconnected_ports")
+      cfg.diagnostics.unconnected_ports = get_bool(val)
+
+   if has_key(t, "missing_ports"):
+      let val = t["missing_ports"]
+      ensure_bool(val, "diagnostics.missing_ports")
+      cfg.diagnostics.missing_ports = get_bool(val)
+
+
 proc parse(t: TomlValueRef): Configuration =
    init(result)
    if has_key(t, "verilog"):
@@ -106,6 +137,9 @@ proc parse(t: TomlValueRef): Configuration =
 
    if has_key(t, "vls"):
       parse_vls_table(t["vls"], result)
+
+   if has_key(t, "diagnostics"):
+      parse_diagnostics_table(t["diagnostics"], result)
 
 
 proc parse_string*(s: string): Configuration =
@@ -133,3 +167,15 @@ proc parse_file*(filename: string): Configuration =
       raise new_configuration_parse_error(
          "Error while parsing configuration file '$1'.", lfilename)
 
+
+proc get_configuration_for_source_file*(filename: string): Configuration =
+   ## Search for a configuration file for the source file ``filename``. If a file
+   ## is found but the parsing fails, the returned object will contain the
+   ## default values.
+   let cfg_filename = find_configuration_file(filename)
+   init(result)
+   if len(cfg_filename) > 0:
+      try:
+         result = parse_file(cfg_filename)
+      except ConfigurationParseError:
+         discard

@@ -39,12 +39,18 @@ defines = [
 
 [vls]
 max_nof_diagnostics = 10
+
+[diagnostics]
+undeclared_identifiers = true
+unconnected_ports = true
+missing_ports = true
 ```
 
 ### Top-level tables
 
 - The `verilog` table collects language-specific settings.
 - The `vls` table collects settings specific to the language server.
+- The `diagnostics` table collects settings specific to diagnostic messages.
 
 ### `verilog` table
 
@@ -54,6 +60,16 @@ max_nof_diagnostics = 10
 ### `vls` table
 
 - `max_nof_diagnostics` specifies the maximum number of diagnostic messages passed in a `textDocument/publishDiagnostics` notification.
+
+### `diagnostics` table
+
+- `undeclared_identifiers` specifies whether or not to publish diagnostic
+  messages for undeclared identifiers. The default value is `true`.
+- `unconnected_ports` specifies whether or not to publish diagnostic messages if
+  a module instance has unconnected input ports. The default value is `true`.
+- `missing_ports` specifies whether or not to publish diagnostic messages if a
+  module instance doesn't list all the available ports. The default value is
+  `true`.
 
 ## Version numbers
 Releases follow [semantic versioning](https://semver.org/) to determine how the version number is incremented. If the specification is ever broken by a release, this will be documented in the changelog.

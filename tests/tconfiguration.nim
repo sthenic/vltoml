@@ -71,10 +71,15 @@ template run_test_find_file(title, stimuli, reference: string) =
       echo reference
 
 
-proc new_configuration(max_nof_diagnostics: int, include_paths, defines: seq[string]): Configuration =
+proc new_configuration(max_nof_diagnostics: int,
+                       undeclared_identifiers, unconnected_ports, missing_ports: bool,
+                       include_paths, defines: seq[string]): Configuration =
    result.include_paths = include_paths
    result.defines = defines
    result.max_nof_diagnostics = max_nof_diagnostics
+   result.diagnostics.undeclared_identifiers = undeclared_identifiers
+   result.diagnostics.unconnected_ports = unconnected_ports
+   result.diagnostics.missing_ports = missing_ports
 
 
 # Test suite title
@@ -92,7 +97,7 @@ include_paths = [
     "/path/to/another/directory",
     "../a/relative/path"
 ]
-""", new_configuration(-1, @[
+""", new_configuration(-1, true, true, true, @[
     "/path/to/some/directory",
     "/path/to/another/directory",
     "../a/relative/path"
@@ -104,7 +109,7 @@ defines = [
     "FOO",
     "WIDTH=8",
     "ONES(x) = {(x){1'b1}}"
-]""", new_configuration(-1, @[], @[
+]""", new_configuration(-1, true, true, true, @[], @[
     "FOO",
     "WIDTH=8",
     "ONES(x) = {(x){1'b1}}"
@@ -142,7 +147,7 @@ defines = [true, false]
 
 
 run_test_file("Parse from a file (trim whitespace)", "cfg.toml",
-   new_configuration(-1, @[
+   new_configuration(-1, true, true, true, @[
       "/path/to/some/directory",
       "/path/to/another/directory",
       join_path(expand_filename("."), "../a/relative/path")
@@ -163,7 +168,7 @@ run_test_find_file("Find '.vl.toml'.", "./", "./.vl/vl.toml")
 run_test("vls.max_nof_diagnostics", """
 [vls]
 max_nof_diagnostics = 10
-""", new_configuration(10, @[], @[]))
+""", new_configuration(10, true, true, true, @[], @[]))
 
 
 run_test("Parse error: 'vls.max_nof_diagnostics' is not an integer", """
@@ -182,12 +187,48 @@ include_paths = [
    "/path/to/dir/a"
 ]
 """,
-   new_configuration(-1, @[
+   new_configuration(-1, true, true, true, @[
       "../tests",
       "/path/to/dir/a",
       "/path/to/dir/b"
    ], @[])
 )
+
+
+run_test("diagnostics.undeclared_identifiers", """
+[diagnostics]
+undeclared_identifiers = false
+""", new_configuration(-1, false, true, true, @[], @[]))
+
+
+run_test("Parse error: 'diagnostics.undeclared_identifiers' is not a boolean", """
+[diagnostics]
+undeclared_identifiers = "false"
+""", Configuration(), true)
+
+
+run_test("diagnostics.unconnected_ports", """
+[diagnostics]
+unconnected_ports = false
+""", new_configuration(-1, true, false, true, @[], @[]))
+
+
+run_test("Parse error: 'diagnostics.unconnected_ports' is not a boolean", """
+[diagnostics]
+unconnected_ports = "false"
+""", Configuration(), true)
+
+
+run_test("diagnostics.missing_ports", """
+[diagnostics]
+missing_ports = false
+""", new_configuration(-1, true, true, false, @[], @[]))
+
+
+run_test("Parse error: 'diagnostics.missing_ports' is not a boolean", """
+[diagnostics]
+missing_ports = "false"
+""", Configuration(), true)
 
 
 # Print summary
