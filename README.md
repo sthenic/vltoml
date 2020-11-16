@@ -58,17 +58,24 @@ missing_parameters = false
 
 ### `verilog` table
 
-- `include_paths` is an array of strings expressing the include paths where `vls` should look for externally defined modules and files targeted by `` `include`` directives.
-- `defines` is an array of strings expressing the defines that should be passed to `vls`. The rules follow that of the `-D` option for [vparse](https://github.com/sthenic/vparse). It's possible to specify a macro by using the character `=` to separate the macro name from its body.
+- `include_paths` is an array of strings expressing the include paths where
+  `vls` should look for externally defined modules and files targeted by ``
+  `include`` directives.
+- `defines` is an array of strings expressing the defines that should be passed
+  to `vls`. The rules follow that of the `-D` option for
+  [`vparse`](https://github.com/sthenic/vparse). It's possible to specify a
+  macro by using the character `=` to separate the macro name from its body.
 
 ### `vls` table
 
-- `max_nof_diagnostics` specifies the maximum number of diagnostic messages passed in a `textDocument/publishDiagnostics` notification.
+- `max_nof_diagnostics` specifies the maximum number of diagnostic messages
+  passed in a `textDocument/publishDiagnostics` notification. The default value
+  is `-1` which implies no upper bound.
 - `indent_size` specifies how many spaces to use for one level of indentation.
   The default value is `4`.
 - `tabs_to_spaces` specifies whether or not to insert spaces instead of the tab
   character `\t` for indentation. The default value is `true`.
-- `space_in_named_connection` specifies whether or not to insert a space when in
+- `space_in_named_connection` specifies whether or not to insert a space when
   completing a named connection, i.e. `.clk_i()` vs. `.clk_i ()`. The default
   value is `false`.
 
@@ -90,7 +97,10 @@ missing_parameters = false
 Releases follow [semantic versioning](https://semver.org/) to determine how the version number is incremented. If the specification is ever broken by a release, this will be documented in the changelog.
 
 ## Reporting a bug
-If you discover a bug or what you believe is unintended behavior, please submit an issue on the [issue board](https://github.com/sthenic/vltoml/issues). A minimal working example and a short description of the context is appreciated and goes a long way towards being able to fix the problem quickly.
+If you discover a bug or what you believe is unintended behavior, please submit
+an issue on the [issue board](https://github.com/sthenic/vltoml/issues). A
+minimal working example and a short description of the context is appreciated
+and goes a long way towards being able to fix the problem quickly.
 
 ## License
 This tool is free software released under the [MIT license](https://opensource.org/licenses/MIT).
