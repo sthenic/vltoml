@@ -39,11 +39,15 @@ defines = [
 
 [vls]
 max_nof_diagnostics = 10
+indent_size = 4
+tabs_to_spaces = true
+space_in_named_connection = false
 
 [diagnostics]
 undeclared_identifiers = true
 unconnected_ports = true
 missing_ports = true
+missing_parameters = false
 ```
 
 ### Top-level tables
@@ -60,6 +64,13 @@ missing_ports = true
 ### `vls` table
 
 - `max_nof_diagnostics` specifies the maximum number of diagnostic messages passed in a `textDocument/publishDiagnostics` notification.
+- `indent_size` specifies how many spaces to use for one level of indentation.
+  The default value is `4`.
+- `tabs_to_spaces` specifies whether or not to insert spaces instead of the tab
+  character `\t` for indentation. The default value is `true`.
+- `space_in_named_connection` specifies whether or not to insert a space when in
+  completing a named connection, i.e. `.clk_i()` vs. `.clk_i ()`. The default
+  value is `false`.
 
 ### `diagnostics` table
 
@@ -70,6 +81,10 @@ missing_ports = true
 - `missing_ports` specifies whether or not to publish diagnostic messages if a
   module instance doesn't list all the available ports. The default value is
   `true`.
+- `missing_parameters` specifies whether or not to publish diagnostic messages
+  if a module instantiation doesn't list all the available parameters. The
+  default value is `false` since relying on default parameter values can be a
+  intentional design strategy.
 
 ## Version numbers
 Releases follow [semantic versioning](https://semver.org/) to determine how the version number is incremented. If the specification is ever broken by a release, this will be documented in the changelog.

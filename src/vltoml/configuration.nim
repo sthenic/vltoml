@@ -6,12 +6,16 @@ type
    Diagnostics* = object
       undeclared_identifiers*: bool
       unconnected_ports*: bool
+      missing_parameters*: bool
       missing_ports*: bool
 
    Configuration* = object
       include_paths*: seq[string]
       defines*: seq[string]
       max_nof_diagnostics*: int
+      indent_size*: int
+      tabs_to_spaces*: bool
+      space_in_named_connection*: bool
       diagnostics*: Diagnostics
 
    ConfigurationParseError* = object of ValueError
@@ -45,9 +49,13 @@ proc init*(cfg: var Configuration) =
    set_len(cfg.include_paths, 0)
    set_len(cfg.defines, 0)
    cfg.max_nof_diagnostics = -1
+   cfg.indent_size = 4
+   cfg.tabs_to_spaces = true
+   cfg.space_in_named_connection = false
    cfg.diagnostics.undeclared_identifiers = true
    cfg.diagnostics.unconnected_ports = true
    cfg.diagnostics.missing_ports = true
+   cfg.diagnostics.missing_parameters = false
 
 
 proc find_configuration_file*(path: string): string =
@@ -112,6 +120,21 @@ proc parse_vls_table(t: TomlValueRef, cfg: var Configuration) =
       ensure_int(val, "vls.max_nof_diagnostics")
       cfg.max_nof_diagnostics = get_int(val)
 
+   if has_key(t, "indent_size"):
+      let val = t["indent_size"]
+      ensure_int(val, "vls.indent_size")
+      cfg.indent_size = get_int(val)
+
+   if has_key(t, "tabs_to_spaces"):
+      let val = t["tabs_to_spaces"]
+      ensure_bool(val, "vls.tabs_to_spaces")
+      cfg.tabs_to_spaces = get_bool(val)
+
+   if has_key(t, "space_in_named_connection"):
+      let val = t["space_in_named_connection"]
+      ensure_bool(val, "vls.space_in_named_connection")
+      cfg.space_in_named_connection = get_bool(val)
+
 
 proc parse_diagnostics_table(t: TomlValueRef, cfg: var Configuration) =
    if has_key(t, "undeclared_identifiers"):
@@ -128,6 +151,11 @@ proc parse_diagnostics_table(t: TomlValueRef, cfg: var Configuration) =
       let val = t["missing_ports"]
       ensure_bool(val, "diagnostics.missing_ports")
       cfg.diagnostics.missing_ports = get_bool(val)
+
+   if has_key(t, "missing_parameters"):
+      let val = t["missing_parameters"]
+      ensure_bool(val, "diagnostics.missing_parameters")
+      cfg.diagnostics.missing_parameters = get_bool(val)
 
 
 proc parse(t: TomlValueRef): Configuration =

@@ -80,6 +80,12 @@ proc new_configuration(max_nof_diagnostics: int,
    result.diagnostics.undeclared_identifiers = undeclared_identifiers
    result.diagnostics.unconnected_ports = unconnected_ports
    result.diagnostics.missing_ports = missing_ports
+   # FIXME: Better way to initialize a new configuration object for the test
+   #        cases.
+   result.diagnostics.missing_parameters = false
+   result.tabs_to_spaces = true
+   result.space_in_named_connection = false
+   result.indent_size = 4
 
 
 # Test suite title
