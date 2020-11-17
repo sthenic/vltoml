@@ -15,6 +15,10 @@ All notable changes to this project will be documented in this file.
   `vls.space_in_named_connection` to configure source code style for completion
   requests.
 
+### Fixed
+
+- Strip trailing '/' characters from include paths.
+
 ## [v0.1.0] - 2020-08-08
 
 - This is the first release of the project.

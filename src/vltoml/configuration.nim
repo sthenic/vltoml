@@ -104,7 +104,7 @@ proc parse_verilog_table(t: TomlValueRef, cfg: var Configuration) =
       ensure_array(include_paths, "verilog.include_paths")
       for val in get_elems(include_paths):
          ensure_string(val, "verilog.include_paths")
-         let path_to_add = strip(get_str(val))
+         let path_to_add = strip(strip(get_str(val)), leading = false, trailing = true, {'/'})
          if path_to_add notin cfg.include_paths:
             add(cfg.include_paths, path_to_add)
 

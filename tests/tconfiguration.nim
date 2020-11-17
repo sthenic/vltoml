@@ -102,12 +102,14 @@ run_test("verilog.include_paths", """
 include_paths = [
     "/path/to/some/directory",
     "/path/to/another/directory",
-    "../a/relative/path"
+    "../a/relative/path/",
+    "../../another/relative/path/**/"
 ]
 """, new_configuration(-1, true, true, true, @[
     "/path/to/some/directory",
     "/path/to/another/directory",
-    "../a/relative/path"
+    "../a/relative/path",
+    "../../another/relative/path/**"
 ], @[]))
 
 run_test("verilog.defines", """
