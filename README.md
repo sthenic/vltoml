@@ -70,7 +70,7 @@ missing_parameters = false
 
 - `max_nof_diagnostics` specifies the maximum number of diagnostic messages
   passed in a `textDocument/publishDiagnostics` notification. The default value
-  is `-1` which implies no upper bound.
+  is `-1` and implies no upper bound.
 - `indent_size` specifies how many spaces to use for one level of indentation.
   The default value is `4`.
 - `tabs_to_spaces` specifies whether or not to insert spaces instead of the tab
@@ -92,6 +92,9 @@ missing_parameters = false
   if a module instantiation doesn't list all the available parameters. The
   default value is `false` since relying on default parameter values can be a
   intentional design strategy.
+- `unassigned_parameters` specifies whether or not to publish diagnostic
+  messages if a module instantiation has unassigned named parameter connections,
+  e.g. `.WIDTH()`. The default value is `true`.
 
 ## Version numbers
 Releases follow [semantic versioning](https://semver.org/) to determine how the version number is incremented. If the specification is ever broken by a release, this will be documented in the changelog.

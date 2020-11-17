@@ -8,6 +8,7 @@ type
       unconnected_ports*: bool
       missing_parameters*: bool
       missing_ports*: bool
+      unassigned_parameters*: bool
 
    Configuration* = object
       include_paths*: seq[string]
@@ -56,6 +57,7 @@ proc init*(cfg: var Configuration) =
    cfg.diagnostics.unconnected_ports = true
    cfg.diagnostics.missing_ports = true
    cfg.diagnostics.missing_parameters = false
+   cfg.diagnostics.unassigned_parameters = true
 
 
 proc find_configuration_file*(path: string): string =
@@ -156,6 +158,11 @@ proc parse_diagnostics_table(t: TomlValueRef, cfg: var Configuration) =
       let val = t["missing_parameters"]
       ensure_bool(val, "diagnostics.missing_parameters")
       cfg.diagnostics.missing_parameters = get_bool(val)
+
+   if has_key(t, "unassigned_parameters"):
+      let val = t["unassigned_parameters"]
+      ensure_bool(val, "diagnostics.unassigned_parameters")
+      cfg.diagnostics.unassigned_parameters = get_bool(val)
 
 
 proc parse(t: TomlValueRef): Configuration =
