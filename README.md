@@ -28,7 +28,8 @@ In short, the configuration file can have two different names: `.vl.toml` or `vl
 include_paths = [
     "/path/to/some/directory",
     "/path/to/another/directory",
-    "../a/relative/path"
+    "../a/relative/path",
+    "/a/recursive/include/**"
 ]
 
 defines = [
@@ -48,6 +49,7 @@ undeclared_identifiers = true
 unconnected_ports = true
 missing_ports = true
 missing_parameters = false
+unassigned_parameters = true
 ```
 
 ### Top-level tables
@@ -60,7 +62,10 @@ missing_parameters = false
 
 - `include_paths` is an array of strings expressing the include paths where
   `vls` should look for externally defined modules and files targeted by ``
-  `include`` directives.
+  `include`` directives. By default, only the Verilog files immediately on the
+  path are included, i.e. `/path/to/some/directory/*.v`, However, a recursive
+  include may be specified by ending the path with `/**`, i.e.
+  `/path/to/some/directory/**`.
 - `defines` is an array of strings expressing the defines that should be passed
   to `vls`. The rules follow that of the `-D` option for
   [`vparse`](https://github.com/sthenic/vparse). It's possible to specify a
