@@ -196,6 +196,7 @@ proc parse_file*(filename: string): Configuration =
       # When we're parsing a file, any
       let parent_dir = parent_dir(lfilename)
       for path in mitems(result.include_paths):
+         path = expand_tilde(path)
          if not is_absolute(path):
             path = join_path(parent_dir, path)
    except TomlError:

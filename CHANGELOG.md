@@ -17,7 +17,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Strip trailing '/' characters from include paths.
+- Strip trailing `/` characters from include paths.
+- Fix not handling `~` properly in include paths.
 
 ## [v0.1.0] - 2020-08-08
 
