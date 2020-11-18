@@ -104,7 +104,7 @@ proc parse_verilog_table(t: TomlValueRef, cfg: var Configuration) =
       ensure_array(include_paths, "verilog.include_paths")
       for val in get_elems(include_paths):
          ensure_string(val, "verilog.include_paths")
-         let path_to_add = strip(strip(get_str(val)), leading = false, trailing = true, {'/'})
+         let path_to_add = strip(get_str(val))
          if path_to_add notin cfg.include_paths:
             add(cfg.include_paths, path_to_add)
 
@@ -176,6 +176,10 @@ proc parse(t: TomlValueRef): Configuration =
    if has_key(t, "diagnostics"):
       parse_diagnostics_table(t["diagnostics"], result)
 
+   # Process include paths: normalize and expand '~'.
+   for path in mitems(result.include_paths):
+      path = normalized_path(expand_tilde(path))
+
 
 proc parse_string*(s: string): Configuration =
    # Used by the test framework.
@@ -193,12 +197,12 @@ proc parse_file*(filename: string): Configuration =
    let lfilename = expand_filename(filename)
    try:
       result = parse(parsetoml.parse_file(lfilename))
-      # When we're parsing a file, any
+      # Any relative path is converted into an absolute path by joining it to
+      # the path of the configuration file's parent directory.
       let parent_dir = parent_dir(lfilename)
       for path in mitems(result.include_paths):
-         path = expand_tilde(path)
          if not is_absolute(path):
-            path = join_path(parent_dir, path)
+            path = parent_dir / path
    except TomlError:
       raise new_configuration_parse_error(
          "Error while parsing configuration file '$1'.", lfilename)

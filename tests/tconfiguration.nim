@@ -103,13 +103,17 @@ include_paths = [
     "/path/to/some/directory",
     "/path/to/another/directory",
     "../a/relative/path/",
-    "../../another/relative/path/**/"
+    "../../another/relative/path/**/",
+    "./a/path//to/..//normalize///",
+    "C:\\a\\Windows\\path\\**"
 ]
 """, new_configuration(-1, true, true, true, @[
     "/path/to/some/directory",
     "/path/to/another/directory",
     "../a/relative/path",
-    "../../another/relative/path/**"
+    "../../another/relative/path/**",
+    "a/path/normalize",
+    "C:\\a\\Windows\\path\\**"
 ], @[]))
 
 run_test("verilog.defines", """
