@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
 - Add `vls.indent_size`, `vls.tabs_to_spaces` and
   `vls.space_in_named_connection` to configure source code style for completion
   requests.
+- Add `vls.cache_workspace_on_open` to enable/disable caching the entire
+  workspace when opening a file.
 
 ### Fixed
 

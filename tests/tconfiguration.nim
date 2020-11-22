@@ -84,6 +84,7 @@ proc new_configuration(max_nof_diagnostics: int,
    #        cases.
    result.diagnostics.missing_parameters = false
    result.diagnostics.unassigned_parameters = true
+   result.cache_workspace_on_open = true
    result.tabs_to_spaces = true
    result.space_in_named_connection = false
    result.indent_size = 4

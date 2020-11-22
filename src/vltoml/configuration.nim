@@ -14,6 +14,7 @@ type
       include_paths*: seq[string]
       defines*: seq[string]
       max_nof_diagnostics*: int
+      cache_workspace_on_open*: bool
       indent_size*: int
       tabs_to_spaces*: bool
       space_in_named_connection*: bool
@@ -50,6 +51,7 @@ proc init*(cfg: var Configuration) =
    set_len(cfg.include_paths, 0)
    set_len(cfg.defines, 0)
    cfg.max_nof_diagnostics = -1
+   cfg.cache_workspace_on_open = true
    cfg.indent_size = 4
    cfg.tabs_to_spaces = true
    cfg.space_in_named_connection = false
@@ -121,6 +123,11 @@ proc parse_vls_table(t: TomlValueRef, cfg: var Configuration) =
       let val = t["max_nof_diagnostics"]
       ensure_int(val, "vls.max_nof_diagnostics")
       cfg.max_nof_diagnostics = get_int(val)
+
+   if has_key(t, "cache_workspace_on_open"):
+      let val = t["cache_workspace_on_open"]
+      ensure_bool(val, "vls.cache_workspace_on_open")
+      cfg.cache_workspace_on_open = get_bool(val)
 
    if has_key(t, "indent_size"):
       let val = t["indent_size"]

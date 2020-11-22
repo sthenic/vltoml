@@ -40,6 +40,7 @@ defines = [
 
 [vls]
 max_nof_diagnostics = 10
+cache_workspace_on_open = true
 indent_size = 4
 tabs_to_spaces = true
 space_in_named_connection = false
@@ -66,6 +67,7 @@ unassigned_parameters = true
   path are included, i.e. `/path/to/some/directory/*.v`, However, a recursive
   include may be specified by ending the path with `/**`, i.e.
   `/path/to/some/directory/**`.
+
 - `defines` is an array of strings expressing the defines that should be passed
   to `vls`. The rules follow that of the `-D` option for
   [`vparse`](https://github.com/sthenic/vparse). It's possible to specify a
@@ -76,10 +78,29 @@ unassigned_parameters = true
 - `max_nof_diagnostics` specifies the maximum number of diagnostic messages
   passed in a `textDocument/publishDiagnostics` notification. The default value
   is `-1` and implies no upper bound.
+
+- `cache_workspace_on_open` specifies whether or not to attempt to cache *all*
+  the modules present on the include paths (`verilog.include_paths`) when a new
+  file is opened. The default value is `true`. If the value is set to `false`,
+  then the degree to which the workspace is 'explored' depends on the module
+  hierarchy seen from the opened file.
+
+  For example, if an instantiation of module `A` is encountered and its
+  declaration is unknown, the source files on the include paths will be analyzed
+  until the declaration is found or the set of source files is exhausted. If the
+  declaration of module `B` is also present on the include path, but not
+  instantiated by any module, its declaration will remain unknown, unless it was
+  discovered when searching for module `A`.
+
+  Not exploring the full workspace affects module instantiation completions but
+  comes with a positive impact on parsing speed for *very* large workspaces.
+
 - `indent_size` specifies how many spaces to use for one level of indentation.
   The default value is `4`.
+
 - `tabs_to_spaces` specifies whether or not to insert spaces instead of the tab
   character `\t` for indentation. The default value is `true`.
+
 - `space_in_named_connection` specifies whether or not to insert a space when
   completing a named connection, i.e. `.clk_i()` vs. `.clk_i ()`. The default
   value is `false`.
@@ -88,15 +109,19 @@ unassigned_parameters = true
 
 - `undeclared_identifiers` specifies whether or not to publish diagnostic
   messages for undeclared identifiers. The default value is `true`.
+
 - `unconnected_ports` specifies whether or not to publish diagnostic messages if
   a module instance has unconnected input ports. The default value is `true`.
+
 - `missing_ports` specifies whether or not to publish diagnostic messages if a
   module instance doesn't list all the available ports. The default value is
   `true`.
+
 - `missing_parameters` specifies whether or not to publish diagnostic messages
   if a module instantiation doesn't list all the available parameters. The
   default value is `false` since relying on default parameter values can be a
   intentional design strategy.
+
 - `unassigned_parameters` specifies whether or not to publish diagnostic
   messages if a module instantiation has unassigned named parameter connections,
   e.g. `.WIDTH()`. The default value is `true`.
